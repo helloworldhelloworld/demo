@@ -14,8 +14,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.example.service.ChatService;
-import com.example.service.RagService;
+import com.example.application.ChatUseCase;
+import com.example.application.DocumentUseCase;
 
 @SpringBootApplication
 public class AiApplication {
@@ -25,16 +25,16 @@ public class AiApplication {
     }
 
     @Bean
-    CommandLineRunner demo(ChatService chatService, RagService ragService) {
+    CommandLineRunner demo(ChatUseCase chatUseCase, DocumentUseCase documentUseCase) {
         return args -> {
-            ragService.addDocuments(List.of(new Document("1", "Spring AI simplifies AI integration for Spring developers.")));
-            var docs = ragService.search("What does Spring AI do?");
+            documentUseCase.addDocuments(List.of(new Document("1", "Spring AI simplifies AI integration for Spring developers.")));
+            var docs = documentUseCase.search("What does Spring AI do?");
             String context = docs.isEmpty() ? "" : docs.get(0).getText();
             var prompt = new Prompt(new UserMessage("Summarize: " + context));
-            System.out.println(chatService.chat(prompt));
+            System.out.println(chatUseCase.chat(prompt));
 
             var prompt2 = new Prompt(new UserMessage("What time is it?"));
-            System.out.println(chatService.chat(prompt2));
+            System.out.println(chatUseCase.chat(prompt2));
         };
     }
 
