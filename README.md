@@ -30,3 +30,9 @@ curl -X DELETE http://localhost:8080/chat/session1
 ```
 
 You can also call simple tools such as the current time using a `/time` command.
+
+### Configuring Prompts
+
+Prompt templates are defined in `application.yaml` under the `app.prompt.templates`
+section. Placeholders like `{context}` are replaced at runtime. You can add
+additional templates and reference them from the application code.

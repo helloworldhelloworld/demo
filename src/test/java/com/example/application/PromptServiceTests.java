@@ -17,7 +17,10 @@ class PromptServiceTests {
         DocumentUseCase documentUseCase = mock(DocumentUseCase.class);
         when(documentUseCase.search("q")).thenReturn(List.of(new Document("id", "doc")));
 
-        PromptService service = new PromptService(documentUseCase);
+        PromptProperties properties = new PromptProperties();
+        properties.getTemplates().put("context", "Context: {context}");
+        PromptTemplateService templateService = new PromptTemplateService(properties);
+        PromptService service = new PromptService(documentUseCase, templateService);
         var prompt = service.buildPrompt(List.of(), "q");
         List<ChatMessage> messages = prompt.getMessages();
         assertEquals(2, messages.size());
