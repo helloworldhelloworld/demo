@@ -15,18 +15,33 @@ import org.springframework.stereotype.Service;
 public class ConversationService {
 
     private final ChatUseCase chatUseCase;
+    private final PromptService promptService;
+    private final ToolService toolService;
     private final Map<String, List<ChatMessage>> sessions = new HashMap<>();
 
-    public ConversationService(ChatUseCase chatUseCase) {
+    public ConversationService(ChatUseCase chatUseCase, PromptService promptService, ToolService toolService) {
         this.chatUseCase = chatUseCase;
+        this.promptService = promptService;
+        this.toolService = toolService;
     }
 
     public synchronized String chat(String sessionId, String message) {
         List<ChatMessage> history = sessions.computeIfAbsent(sessionId, id -> new ArrayList<>());
         history.add(new UserMessage(message));
-        Prompt prompt = new Prompt(history);
+
+        String toolResponse = toolService.handle(message);
+        if (toolResponse != null) {
+            history.add(new AssistantMessage(toolResponse));
+            return toolResponse;
+        }
+
+        Prompt prompt = promptService.buildPrompt(history, message);
         String response = chatUseCase.chat(prompt);
         history.add(new AssistantMessage(response));
         return response;
+    }
+
+    public synchronized void clear(String sessionId) {
+        sessions.remove(sessionId);
     }
 }

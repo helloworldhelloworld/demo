@@ -3,9 +3,10 @@ This project demonstrates basic usage of **Spring AI** with function calls and
 retrieval–augmented generation (RAG). The application is built with Maven and
 uses Spring Boot.
 
-The source code follows a simple layered design. AI interactions, RAG logic and
-tool functions are implemented in separate service classes under
-`com.example.service` for easier extension and testing.
+The source code follows a layered design. AI interactions, RAG logic and tool
+functions are implemented in dedicated services under `com.example.application`
+for easier extension and testing. Conversations are tracked per session and can
+be cleared using an HTTP `DELETE` request.
 
 ### Running
 
@@ -21,4 +22,11 @@ Once running you can chat with the AI over HTTP:
 curl -X POST http://localhost:8080/chat/session1 -d 'Hello'
 ```
 
-Use the same session id to continue the conversation.
+Use the same session id to continue the conversation. To reset a conversation
+send:
+
+```bash
+curl -X DELETE http://localhost:8080/chat/session1
+```
+
+You can also call simple tools such as the current time using a `/time` command.

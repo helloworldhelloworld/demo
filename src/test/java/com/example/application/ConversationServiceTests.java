@@ -11,6 +11,9 @@ import org.springframework.ai.chat.prompt.ChatMessage;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.UserMessage;
 
+import com.example.application.PromptService;
+import com.example.application.ToolService;
+
 class ConversationServiceTests {
 
     @Test
@@ -18,7 +21,12 @@ class ConversationServiceTests {
         ChatUseCase useCase = mock(ChatUseCase.class);
         when(useCase.chat(any())).thenReturn("a").thenReturn("b");
 
-        ConversationService service = new ConversationService(useCase);
+        PromptService promptService = mock(PromptService.class);
+        when(promptService.buildPrompt(anyList(), anyString()))
+                .thenAnswer(inv -> new Prompt(inv.getArgument(0)));
+
+        ToolService toolService = mock(ToolService.class);
+        ConversationService service = new ConversationService(useCase, promptService, toolService);
         assertEquals("a", service.chat("1", "hello"));
         assertEquals("b", service.chat("1", "how are you?"));
 
