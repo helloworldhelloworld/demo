@@ -2,6 +2,9 @@ app:
   prompt:
     templates:
       context: "Context: {context}"
-      rag: "Answer using this information: {context}"
       functioncall: "Use tools with /commands when needed"
-      mcp: "Conversation so far: {history}"
+    scenarios:
+      rag:
+        system: "Answer using this information: {context}"
+      mcp:
+        system: "Conversation so far: {history}"
