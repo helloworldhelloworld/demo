@@ -3,6 +3,7 @@ package com.example.application;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.ai.chat.prompt.ChatMessage;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -23,12 +24,33 @@ public class PromptService {
     }
 
     public Prompt buildPrompt(List<ChatMessage> history, String userMessage) {
-        List<ChatMessage> messages = new ArrayList<>(history);
+        List<ChatMessage> messages = new ArrayList<>();
+
+        String tools = templateService.render("functioncall", Map.of());
+        if (tools != null) {
+            messages.add(new SystemMessage(tools));
+        }
+
+        if (!history.isEmpty()) {
+            String joined = history.stream()
+                    .map(ChatMessage::getContent)
+                    .collect(Collectors.joining("\n"));
+            String memory = templateService.render("mcp", Map.of("history", joined));
+            if (memory != null) {
+                messages.add(new SystemMessage(memory));
+            }
+            messages.addAll(history);
+        }
+
         messages.add(new UserMessage(userMessage));
 
         List<Document> docs = documentUseCase.search(userMessage);
         if (!docs.isEmpty()) {
-            String context = templateService.render("context", Map.of("context", docs.get(0).getText()));
+            Map<String, String> vars = Map.of("context", docs.get(0).getText());
+            String context = templateService.render("rag", vars);
+            if (context == null) {
+                context = templateService.render("context", vars);
+            }
             if (context == null) {
                 context = "Context: " + docs.get(0).getText();
             }

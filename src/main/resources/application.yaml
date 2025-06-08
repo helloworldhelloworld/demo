@@ -2,3 +2,6 @@ app:
   prompt:
     templates:
       context: "Context: {context}"
+      rag: "Answer using this information: {context}"
+      functioncall: "Use tools with /commands when needed"
+      mcp: "Conversation so far: {history}"
