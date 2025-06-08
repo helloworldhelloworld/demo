@@ -33,6 +33,8 @@ You can also call simple tools such as the current time using a `/time` command.
 
 ### Configuring Prompts
 
-Prompt templates are defined in `application.yaml` under the `app.prompt.templates`
-section. Placeholders like `{context}` are replaced at runtime. You can add
-additional templates and reference them from the application code.
+Prompt templates are defined in `application.yaml` under the `app.prompt` section.
+Simple values live under `templates` while scenario specific prompts (e.g. RAG or
+multi turn chat) are configured under `scenarios`. Placeholders like `{context}`
+or `{history}` are replaced at runtime. You can add additional templates or
+scenarios and reference them from the application code.

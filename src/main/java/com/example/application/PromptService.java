@@ -35,27 +35,40 @@ public class PromptService {
             String joined = history.stream()
                     .map(ChatMessage::getContent)
                     .collect(Collectors.joining("\n"));
-            String memory = templateService.render("mcp", Map.of("history", joined));
-            if (memory != null) {
+            var scenario = templateService.getScenario("mcp");
+            if (scenario != null && scenario.getSystem() != null) {
+                String memory = templateService.renderTemplate(scenario.getSystem(), Map.of("history", joined));
                 messages.add(new SystemMessage(memory));
             }
             messages.addAll(history);
         }
 
-        messages.add(new UserMessage(userMessage));
-
+        String userContent = userMessage;
         List<Document> docs = documentUseCase.search(userMessage);
         if (!docs.isEmpty()) {
-            Map<String, String> vars = Map.of("context", docs.get(0).getText());
-            String context = templateService.render("rag", vars);
+            Map<String, String> vars = Map.of("context", docs.get(0).getText(), "message", userMessage);
+            var scenario = templateService.getScenario("rag");
+            if (scenario != null && scenario.getUser() != null) {
+                userContent = templateService.renderTemplate(scenario.getUser(), vars);
+            }
+            String context = null;
+            if (scenario != null && scenario.getSystem() != null) {
+                context = templateService.renderTemplate(scenario.getSystem(), vars);
+            }
             if (context == null) {
                 context = templateService.render("context", vars);
             }
-            if (context == null) {
-                context = "Context: " + docs.get(0).getText();
+            if (context != null) {
+                messages.add(new SystemMessage(context));
             }
-            messages.add(new SystemMessage(context));
+        } else {
+            var scenario = templateService.getScenario("mcp");
+            if (scenario != null && scenario.getUser() != null) {
+                userContent = templateService.renderTemplate(scenario.getUser(), Map.of("message", userMessage));
+            }
         }
+
+        messages.add(new UserMessage(userContent));
 
         return new Prompt(messages);
     }

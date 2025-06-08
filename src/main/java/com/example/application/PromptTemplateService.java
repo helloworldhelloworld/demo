@@ -13,11 +13,19 @@ public class PromptTemplateService {
         this.properties = properties;
     }
 
+    public PromptProperties.Scenario getScenario(String name) {
+        return properties.getScenarios().get(name);
+    }
+
     public String render(String name, Map<String, String> variables) {
         String template = properties.getTemplates().get(name);
         if (template == null) {
             return null;
         }
+        return renderTemplate(template, variables);
+    }
+
+    public String renderTemplate(String template, Map<String, String> variables) {
         String result = template;
         for (Map.Entry<String, String> entry : variables.entrySet()) {
             result = result.replace("{" + entry.getKey() + "}", entry.getValue());
