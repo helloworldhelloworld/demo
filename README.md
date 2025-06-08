@@ -14,3 +14,11 @@ Set your OpenAI API key in the `OPENAI_API_KEY` environment variable and run:
 ```bash
 mvn spring-boot:run
 ```
+
+Once running you can chat with the AI over HTTP:
+
+```bash
+curl -X POST http://localhost:8080/chat/session1 -d 'Hello'
+```
+
+Use the same session id to continue the conversation.
