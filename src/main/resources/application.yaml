@@ -1,0 +1,4 @@
+app:
+  prompt:
+    templates:
+      context: "Context: {context}"
