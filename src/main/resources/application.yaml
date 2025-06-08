@@ -5,3 +5,4 @@ app:
       rag: "Answer using this information: {context}"
       functioncall: "Use tools with /commands when needed"
       mcp: "Conversation so far: {history}"
+      react: "Respond using the ReAct format with Thought, Action and Observation"

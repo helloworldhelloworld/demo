@@ -31,6 +31,11 @@ public class PromptService {
             messages.add(new SystemMessage(tools));
         }
 
+        String react = templateService.render("react", Map.of());
+        if (react != null) {
+            messages.add(new SystemMessage(react));
+        }
+
         if (!history.isEmpty()) {
             String joined = history.stream()
                     .map(ChatMessage::getContent)

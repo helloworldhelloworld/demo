@@ -20,17 +20,19 @@ class PromptServiceTests {
 
         PromptProperties properties = new PromptProperties();
         properties.getTemplates().put("functioncall", "TOOLS");
+        properties.getTemplates().put("react", "REACT");
         properties.getTemplates().put("mcp", "History: {history}");
         properties.getTemplates().put("rag", "RAG: {context}");
         PromptTemplateService templateService = new PromptTemplateService(properties);
         PromptService service = new PromptService(documentUseCase, templateService);
         var prompt = service.buildPrompt(List.of(new UserMessage("hi")), "q");
         List<ChatMessage> messages = prompt.getMessages();
-        assertEquals(5, messages.size());
+        assertEquals(6, messages.size());
         assertEquals("TOOLS", ((SystemMessage) messages.get(0)).getContent());
-        assertEquals("History: hi", ((SystemMessage) messages.get(1)).getContent());
-        assertEquals("hi", messages.get(2).getContent());
-        assertEquals("q", messages.get(3).getContent());
-        assertEquals("RAG: doc", ((SystemMessage) messages.get(4)).getContent());
+        assertEquals("REACT", ((SystemMessage) messages.get(1)).getContent());
+        assertEquals("History: hi", ((SystemMessage) messages.get(2)).getContent());
+        assertEquals("hi", messages.get(3).getContent());
+        assertEquals("q", messages.get(4).getContent());
+        assertEquals("RAG: doc", ((SystemMessage) messages.get(5)).getContent());
     }
 }

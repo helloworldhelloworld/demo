@@ -1,7 +1,7 @@
 # AI Framework
-This project demonstrates basic usage of **Spring AI** with function calls and
-retrieval–augmented generation (RAG). The application is built with Maven and
-uses Spring Boot.
+This project demonstrates basic usage of **Spring AI** with function calls,
+retrieval–augmented generation (RAG) and a simple implementation of the
+ReAct pattern. The application is built with Maven and uses Spring Boot.
 
 The source code follows a layered design. AI interactions, RAG logic and tool
 functions are implemented in dedicated services under `com.example.application`
@@ -33,6 +33,9 @@ You can also call simple tools such as the current time using a `/time` command.
 
 ### Configuring Prompts
 
-Prompt templates are defined in `application.yaml` under the `app.prompt.templates`
-section. Placeholders like `{context}` are replaced at runtime. You can add
-additional templates and reference them from the application code.
+Prompt templates are defined in `application.yaml` under the
+`app.prompt.templates` section. Placeholders like `{context}` are replaced at
+runtime. The default configuration includes templates for RAG context, tool
+instructions and a `react` template that guides the model to respond using the
+ReAct style. You can add additional templates and reference them from the
+application code.
