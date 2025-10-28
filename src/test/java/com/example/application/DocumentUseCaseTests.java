@@ -18,7 +18,10 @@ class DocumentUseCaseTests {
         DocumentStorePort store = mock(DocumentStorePort.class);
         DocumentUseCase useCase = new DocumentUseCase(store);
 
-        List<Document> docs = Collections.singletonList(new Document("id", "text"));
+        List<Document> docs = Collections.singletonList(Document.builder()
+                .id("id")
+                .text("text")
+                .build());
         useCase.addDocuments(docs);
         verify(store).addDocuments(docs);
 

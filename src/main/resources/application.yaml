@@ -1,10 +1,14 @@
 app:
   prompt:
     templates:
-      context: "Context: {context}"
-      functioncall: "Use tools with /commands when needed"
+      functioncall: |-
+        You speak Model Context Protocol (MCP). When you need tool output, emit a JSON message with
+        {"type":"call_tool","name":"currentTime","arguments":{"timezone":"<IANA zone>"}}.
+        Never invent tool names. If a required argument is missing or ambiguous, respond with a card:
+        {"type":"card","card":{"title":"<what you need>","body":"<how to respond>","actions":[{"type":"input","name":"timezone","label":"提供时区"},{"type":"reply","label":"使用 UTC","value":"{\\"type\\":\\"call_tool\\",\\"name\\":\\"currentTime\\",\\"arguments\\":{\\"timezone\\":\\"UTC\\"}}"}]}}
+        Cards always ask for clarification instead of assuming defaults.
     scenarios:
-      rag:
-        system: "Answer using this information: {context}"
       mcp:
-        system: "Conversation so far: {history}"
+        system: "Transcript you must respect when planning tool invocations: {history}"
+        constraints: "Follow the MCP specification: produce well-formed JSON objects and avoid plain text when calling tools."
+        user: "User request: {message}"

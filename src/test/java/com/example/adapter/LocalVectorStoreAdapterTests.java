@@ -12,7 +12,8 @@ class LocalVectorStoreAdapterTests {
     @Test
     void searchReturnsMostSimilarDocument() {
         LocalVectorStoreAdapter store = new LocalVectorStoreAdapter();
-        store.addDocuments(List.of(new Document("1", "hello world"), new Document("2", "goodbye")));
+        store.addDocuments(List.of(Document.builder().id("1").text("hello world").build(),
+                Document.builder().id("2").text("goodbye").build()));
         var result = store.search("hello");
         assertEquals(1, result.size());
         assertEquals("1", result.get(0).getId());

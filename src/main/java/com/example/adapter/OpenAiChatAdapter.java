@@ -17,6 +17,6 @@ public class OpenAiChatAdapter implements ChatPort {
 
     @Override
     public String chat(Prompt prompt) {
-        return chatClient.call(prompt).getResult().getOutput().getContent();
+        return chatClient.prompt(prompt).call().content();
     }
 }

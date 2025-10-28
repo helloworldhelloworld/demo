@@ -14,7 +14,7 @@ public class SystemTimeAdapter implements TimePort {
 
     @Override
     @Tool(name = "currentTime", description = "Get current server time")
-    public String currentTime(@ToolParam(description = "Time zone", required = false) String zone) {
-        return ZonedDateTime.now(zone == null ? ZoneId.systemDefault() : ZoneId.of(zone)).toString();
+    public String currentTime(@ToolParam(description = "IANA time zone", required = true) String zone) {
+        return ZonedDateTime.now(ZoneId.of(zone)).toString();
     }
 }
