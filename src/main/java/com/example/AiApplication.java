@@ -2,16 +2,13 @@ package com.example;
 
 import java.util.List;
 
+import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.chat.prompt.UserMessage;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.embedding.EmbeddingModel;
-import org.springframework.ai.openai.OpenAiEmbeddingModel;
-import org.springframework.ai.openai.api.OpenAiApi;
-import org.springframework.ai.vectorstore.SimpleVectorStore;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
@@ -27,9 +24,13 @@ public class AiApplication {
     }
 
     @Bean
+    @ConditionalOnProperty(value = "app.demo.enabled", havingValue = "true", matchIfMissing = true)
     CommandLineRunner demo(ChatUseCase chatUseCase, DocumentUseCase documentUseCase) {
         return args -> {
-            documentUseCase.addDocuments(List.of(new Document("1", "Spring AI simplifies AI integration for Spring developers.")));
+            documentUseCase.addDocuments(List.of(Document.builder()
+                    .id("1")
+                    .text("Spring AI simplifies AI integration for Spring developers.")
+                    .build()));
             var docs = documentUseCase.search("What does Spring AI do?");
             String context = docs.isEmpty() ? "" : docs.get(0).getText();
             var prompt = new Prompt(new UserMessage("Summarize: " + context));
@@ -40,9 +41,4 @@ public class AiApplication {
         };
     }
 
-    @Bean
-    SimpleVectorStore vectorStore(OpenAiApi api) {
-        EmbeddingModel model = new OpenAiEmbeddingModel(api);
-        return SimpleVectorStore.builder(model).build();
-    }
 }
